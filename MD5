@@ -1,0 +1,13 @@
+cc7a7e6ddbe70ce13c5bf3205fd7a7f2 *DESCRIPTION
+74384f491ab5758d4302599479064cb2 *NAMESPACE
+b4a6357df2bc4df1e8d2b1730574e37b *R/bmeta.R
+5c5c5bfbecc7cbc657fb634732cb1c26 *man/acf.plot.Rd
+ef26c21607825dc2f04ec5b4c9af9974 *man/bmeta-package.Rd
+37d7cf6959c218fe3cc6f4e5cd70ea0a *man/bmeta.Rd
+dfc91a92a758b35ad50d45c4b83aaf7e *man/diag.plot.Rd
+37ecf1a75779e4e80e1ccb18b12aebd9 *man/forest.plot.Rd
+0938a932a00471901cebce64cc1ee730 *man/funnel.plot.Rd
+079150b16fdcafa32a4d623ae0430539 *man/posterior.plot.Rd
+dee72135c6326a9b6ba9e2ee86876293 *man/print.bmeta.Rd
+ac4c021a18c8232dd1941ecabde7742e *man/traceplot.bmeta.Rd
+54b05717b40ffe4a17847e21234ac315 *man/writeModel.Rd
