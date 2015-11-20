@@ -1,8 +1,8 @@
 Package: bmeta
 Type: Package
 Title: A Package for Bayesian Meta-Analysis and Meta-Regression
-Version: 0.1
-Date: 2015-10-29
+Version: 0.1.1
+Date: 2015-11-19
 Author: Tao Ding, Gianluca Baio
 Maintainer: Gianluca Baio <gianluca@stats.ucl.ac.uk>
 Depends: R2jags,forestplot
@@ -11,6 +11,6 @@ License: GPL (>= 2)
 URL: http://www.statistica.it/gianluca/bmeta,
         http://www.statistica.it/gianluca
 NeedsCompilation: no
-Packaged: 2015-10-29 16:51:56 UTC; gianluca
+Packaged: 2015-11-19 09:02:23 UTC; gianluca
 Repository: CRAN
-Date/Publication: 2015-10-29 18:50:46
+Date/Publication: 2015-11-20 11:00:54

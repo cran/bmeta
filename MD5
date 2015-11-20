@@ -1,8 +1,8 @@
-cc7a7e6ddbe70ce13c5bf3205fd7a7f2 *DESCRIPTION
+20d341c6bd22b00e800781785a0fbee8 *DESCRIPTION
 74384f491ab5758d4302599479064cb2 *NAMESPACE
-b4a6357df2bc4df1e8d2b1730574e37b *R/bmeta.R
+43605b13de696855efd5069551d675b1 *R/bmeta.R
 5c5c5bfbecc7cbc657fb634732cb1c26 *man/acf.plot.Rd
-ef26c21607825dc2f04ec5b4c9af9974 *man/bmeta-package.Rd
+9c19ca618edf176f85c7ebc8a62f3bdb *man/bmeta-package.Rd
 37d7cf6959c218fe3cc6f4e5cd70ea0a *man/bmeta.Rd
 dfc91a92a758b35ad50d45c4b83aaf7e *man/diag.plot.Rd
 37ecf1a75779e4e80e1ccb18b12aebd9 *man/forest.plot.Rd

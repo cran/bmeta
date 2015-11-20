@@ -585,14 +585,14 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
         xlog <- FALSE
         if(exists("zero",where=exArgs)){zero=exArgs$zero} else {zero=1}
         
-        forestplot::forestplot(labeltext=c(study.label,""),mean=c(tab0[ind0,1],tab[ind1,1]),lower=c(tab0[ind0,3],tab[ind1,3]),
+        forestplot::forestplot(labeltext=study.label,mean=c(tab0[ind0,1],tab[ind1,1]),lower=c(tab0[ind0,3],tab[ind1,3]),
                                upper=c(tab0[ind0,7],tab[ind1,7]),is.summary=is.sum,new_page=new_page,title=title,boxsize=boxsize,
                                txt_gp=txt_gp,xlab=xlab,xlog=xlog,col=col,zero=zero,fn.ci_norm=fn.ci_norm)  
       } else {
         xlog <- TRUE
         if(exists("zero",where=exArgs)){zero=exArgs$zero} else {zero=0}
         
-        forestplot::forestplot(labeltext=c(study.label,""),mean=c(tab0[ind,1],tab[ind2,1]),lower=c(tab0[ind,3],tab[ind2,3]),
+        forestplot::forestplot(labeltext=study.label,mean=c(tab0[ind,1],tab[ind2,1]),lower=c(tab0[ind,3],tab[ind2,3]),
                                upper=c(tab0[ind,7],tab[ind2,7]),is.summary=is.sum,new_page=new_page,title=title,boxsize=boxsize,
                                txt_gp=txt_gp,xlab=xlab,clip=clip,col=col,zero=zero,fn.ci_norm=fn.ci_norm)  
         
@@ -621,7 +621,7 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
       
       if(exists("zero",where=exArgs)){zero=exArgs$zero} else {zero=0}
       
-      forestplot::forestplot(labeltext=c(study.label,""),mean=c(tab0[ind0,1],tab[ind1,1]),lower=c(tab0[ind0,3],tab[ind1,3]),
+      forestplot::forestplot(labeltext=study.label,mean=c(tab0[ind0,1],tab[ind1,1]),lower=c(tab0[ind0,3],tab[ind1,3]),
                              upper=c(tab0[ind0,7],tab[ind1,7]),is.summary=is.sum,new_page=new_page,title=title,boxsize=boxsize,
                              txt_gp=txt_gp,xlab=xlab,col=col,clip=clip,zero=zero,fn.ci_norm=fn.ci_norm)  
       
@@ -638,14 +638,14 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
         xlog <- FALSE
         if(exists("zero",where=exArgs)){zero=exArgs$zero} else {zero=1}
         
-        forestplot::forestplot(labeltext=c(study.label,""),mean=c(tab0[ind0,1],tab[ind1,1]),lower=c(tab0[ind0,3],tab[ind1,3]),
+        forestplot::forestplot(labeltext=study.label,mean=c(tab0[ind0,1],tab[ind1,1]),lower=c(tab0[ind0,3],tab[ind1,3]),
                                upper=c(tab0[ind0,7],tab[ind1,7]),is.summary=is.sum,new_page=new_page,title=title,boxsize=boxsize,
                                txt_gp=txt_gp,xlab=xlab,xlog=xlog,col=col,zero=zero,fn.ci_norm=fn.ci_norm)  
       } else {
         xlog <- TRUE
         if(exists("zero",where=exArgs)){zero=exArgs$zero} else {zero=0}
         
-        forestplot::forestplot(labeltext=c(study.label,""),mean=c(tab0[ind,1],tab[ind2,1]),lower=c(tab0[ind,3],tab[ind2,3]),
+        forestplot::forestplot(labeltext=study.label,mean=c(tab0[ind,1],tab[ind2,1]),lower=c(tab0[ind,3],tab[ind2,3]),
                                upper=c(tab0[ind,7],tab[ind2,7]),is.summary=is.sum,new_page=new_page,title=title,boxsize=boxsize,
                                txt_gp=txt_gp,xlab=xlab,clip=clip,col=col,zero=zero,fn.ci_norm=fn.ci_norm)  
         
@@ -712,14 +712,14 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
         xlog <- FALSE
         if(exists("zero",where=exArgs)){zero=exArgs$zero} else {zero=1}
         
-        forestplot::forestplot(labeltext=c(study.label,""),mean=c(tab[ind1,1],tab[ind2,1]),lower=c(tab[ind1,3],tab[ind2,3]),
+        forestplot::forestplot(labeltext=study.label,mean=c(tab[ind1,1],tab[ind2,1]),lower=c(tab[ind1,3],tab[ind2,3]),
                                upper=c(tab[ind1,7],tab[ind2,7]),is.summary=is.sum,new_page=new_page,title=title,boxsize=boxsize,
                                txt_gp=txt_gp,xlab=xlab,xlog=xlog,col=col,zero=zero,fn.ci_norm=fn.ci_norm)
       } else {
         xlog <- TRUE
         if(exists("zero",where=exArgs)){zero=exArgs$zero} else {zero=0}
         
-        forestplot::forestplot(labeltext=c(study.label,""),mean=c(tab[ind1,1],tab[ind2,1]),lower=c(tab[ind1,3],tab[ind2,3]),
+        forestplot::forestplot(labeltext=study.label,mean=c(tab[ind1,1],tab[ind2,1]),lower=c(tab[ind1,3],tab[ind2,3]),
                                upper=c(tab[ind1,7],tab[ind2,7]),is.summary=is.sum,new_page=new_page,title=title,boxsize=boxsize,
                                txt_gp=txt_gp,xlab=xlab,clip=clip,col=col,zero=zero,fn.ci_norm=fn.ci_norm)  
         
@@ -756,7 +756,7 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
           legend=c("Estimates from random-effects model","Estimates from no-pooling effects model")
         }
         
-        forestplot::forestplot(labeltext=c(study.label,""),mean=cbind(mean1[,1],mean0[,1]),
+        forestplot::forestplot(labeltext=study.label,mean=cbind(mean1[,1],mean0[,1]),
                                lower=cbind(lower1[,1],lower0[,1]),upper=cbind(upper1[,1],upper0[,1]),
                                is.summary=is.sum,new_page=new_page,boxsize=boxsize,line.margin=line.margin,xlog=xlog,
                                fn.ci_norm=fn.ci_norm,col=col,title=title,legend=legend,txt_gp=txt_gp,
@@ -771,7 +771,7 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
           legend=c("Estimates from random-effects model","Estimates from no-pooling effects model")
         }
         
-        forestplot::forestplot(labeltext=c(study.label,""),mean=cbind(mean1[,1],mean0[,1]),
+        forestplot::forestplot(labeltext=study.label,mean=cbind(mean1[,1],mean0[,1]),
                                lower=cbind(lower1[,1],lower0[,1]),upper=cbind(upper1[,1],upper0[,1]),
                                is.summary=is.sum,new_page=new_page,boxsize=boxsize,line.margin=line.margin,
                                fn.ci_norm=fn.ci_norm,col=col,title=title,legend=legend,txt_gp=txt_gp,
@@ -1099,7 +1099,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       rho<-exp(delta)
       } "
     } else {
-      "model {  \n## b. binary fixed-effects meta-regression with t-distribution prior
+      "
+      model {  \n## b. binary fixed-effects meta-regression with t-distribution prior
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
@@ -1317,7 +1318,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])      
       delta~dnorm(0,0.0001)
       }"
-    } else { " 
+    } else { 
+      "
       model{ \n## a. continuous fix-effects meta-regression with data available for two arms separately
       for(s in 1:S) { 
       y0[s]~dnorm(alpha0[s],prec0[s])       
@@ -1343,7 +1345,7 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     sel.mod.ctns.reg.ta.ran<-if(data$J==1){
       "
-      model{  \n## b. continuous random-effects meta-regression with data available for two arms separately
+      model{ \n## b. continuous random-effects meta-regression with data available for two arms separately
       for(s in 1:S) { 
       y0[s]~dnorm(alpha0[s],prec0[s])       
       y1[s]~dnorm(alpha1[s],prec1[s])       
@@ -1366,7 +1368,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       
       }" 
     } else {
-      "model{ \n## b. continuous random-effects meta-regression with data available for two arms separately
+      "
+      model{ \n## b. continuous random-effects meta-regression with data available for two arms separately
       for(s in 1:S) { 
       y0[s]~dnorm(alpha0[s],prec0[s])       
       y1[s]~dnorm(alpha1[s],prec1[s])       
@@ -1406,7 +1409,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       alpha~dnorm(0,0.0001)
       }"
     } else {
-      "model{ \n## d. continuous fixed-effects meta-regression for studies reporting mean difference and pooled variance
+      "
+      model{ \n## d. continuous fixed-effects meta-regression for studies reporting mean difference and pooled variance
       for(s in 1:S){ 
       y[s]~dnorm(delta[s],prec[s])        
       delta[s]<-alpha+Z0[s,]%*%beta0
@@ -1438,7 +1442,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       sigma~dunif(0,10)
       }"
     } else {
-      "model{  \n## d. continuous random-effects meta-regression for studies reporting mean difference and pooled variance
+      "
+      model{  \n## d. continuous random-effects meta-regression for studies reporting mean difference and pooled variance
       for(s in 1:S){
       y[s]~dnorm(delta[s],prec[s])        
       delta[s]<-alpha[s]+Z0[s,]%*%beta0
@@ -1564,7 +1569,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       
       IRR<-exp(delta)
       }"
-    } else {"
+    } else {
+      "
       model{ \n## a. count fixed-effects meta-regression
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
@@ -1614,7 +1620,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       IRR<-exp(mu)
       }"
     } else {
-      "model{ \n## b. count random-effects meta-regression with uniform prior
+      "
+      model{ \n## b. count random-effects meta-regression with uniform prior
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
       y1[s]~dpois(lambda1[s])
@@ -1669,7 +1676,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       IRR<-exp(mu)
       
       }"
-    } else {"
+    } else {
+      "
       model{ \n## c. count random-effects meta-regression with halfcauchy prior
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
