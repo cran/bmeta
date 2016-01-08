@@ -176,10 +176,10 @@ m2 <- bmeta(data.list2, outcome="ctns", model="reg.mv", type="ran",n.iter=100)
 data = read.csv(url("http://www.statistica.it/gianluca/bmeta/Data-count.csv"))  
 
 ### List data for count outcome (for meta-analysis)
-d1 <- data.list <- list(y0=data$y0,y1=data$y1,pt0=data$pt0,pt1=data$pt1)
+d1 <- data.list <- list(y0=data$y0,y1=data$y1,p0=data[,6],p1=data[,10])
 
 ### List data for count outcome when there is a covariate (for meta-regression)
-d2 <- data.list <- list(y0=data$y0,y1=data$y1,pt0=data$pt0,pt1=data$pt1,X=cbind(data$X0)) 
+d2 <- data.list <- list(y0=data$y0,y1=data$y1,p0=data[,6],p1=data[,10],X=cbind(data$X0)) 
 
 ### Select fixed-effects meta-analysis for count data
 m1 <- bmeta(d1, outcome="count", model="std", type="fix",n.iter=100)

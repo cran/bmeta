@@ -1,15 +1,16 @@
 \name{posterior.plot}
 \alias{posterior.plot}
 \title{
-Posterior distribution plots for summary estimates
+Posterior distribution plots for summary estimates and between-study standard 
+deviation (measurement of heterogeneity)
 }
 \description{
-Function to create posterior distribution plots for summary estimates based on output
-from \code{bmeta}
+Function to create posterior distribution plots for summary estimates and 
+between-study standard deviation based on output from \code{bmeta}
 }
 \usage{
 posterior.plot(x, xlim = NULL, xlab="", main="Posterior distribution Plot", 
-scale = "log")
+scale = "log",heterogeneity=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,6 +31,11 @@ title of the plot. If unspecified, the function sets an appropriate title by def
 logical specifying whether summary estimates need to be displayed on log ("log") or 
 natural scale ("exp"). For continuous data, summary estimates are always displayed on 
 natural scale, therefore, users do not need to specify this option. 
+}
+  \item{heterogeneity}{
+logical specifying whether to resent posterior plot for between-study standard 
+deviation (TRUE) to examine heterogeneity of different studies. If unspecified, FALSE 
+by default.
 }
 }
 \references{
@@ -60,5 +66,11 @@ posterior.plot(x,xlim=c(-2,1))
 ### using output from bmeta on natural scale and specify more options 
 posterior.plot(x,xlim=c(-0.5,2.5),xlab="odds ratio",main="Posterior distribution
 of pooled odds ratio", scale="exp")
+
+### examine heterogeneity by producing posterior plot for between-study standard
+### deviation
+posterior.plot(x,heterogeneity=TRUE,xlim=c(0,3),xlab="between-study standard 
+deviation")
+
 }
 \keyword{Bayesian meta-analysis}

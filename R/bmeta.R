@@ -86,11 +86,11 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
   }
   
   if (outcome=="count" & (model=="std"|model=="std.unif"|model=="std.hc")){
-    dataJags<-list(S=S,y0=data$y0,pt0=data$pt0,y1=data$y1,pt1=data$pt1)
+    dataJags<-list(S=S,y0=data$y0,p0=data$p0,y1=data$y1,p1=data$p1)
   }
   
   if (outcome=="count" & (model=="reg"|model=="reg.unif"|model=="reg.hc")){
-    dataJags<-list(S=S,y0=data$y0,pt0=data$pt0,y1=data$y1,pt1=data$pt1,J=J,Z0=Z0,m.beta0=rep(0,J),
+    dataJags<-list(S=S,y0=data$y0,p0=data$p0,y1=data$y1,p1=data$p1,J=J,Z0=Z0,m.beta0=rep(0,J),
                    tau.beta0=.0001*diag(J))
   } 
   
@@ -111,7 +111,7 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
   } 
   
   if (outcome=="bin" & type=="ran"){
-    params <- c("rho","alpha","delta","tau.delta","gamma","mu")
+    params <- c("rho","alpha","delta","tau","gamma","mu","sigma")
   }
   
   if (outcome=="ctns" & type=="fix" & (model=="std.ta" | model=="reg.ta")){
@@ -119,7 +119,7 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
   }
   
   if (outcome=="ctns" & type=="ran" & (model=="std.ta" | model=="reg.ta")){
-    params <- c("alpha0","alpha1","delta","mu","tau.delta")
+    params <- c("alpha0","alpha1","delta","mu","tau","sigma")
   }
   
   if (outcome=="ctns" & type=="fix" & model=="std.mv" ){
@@ -127,7 +127,7 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
   }
   
   if (outcome=="ctns" & type=="ran" & model=="std.mv"){
-    params <- c("mu","delta","tau.delta")
+    params <- c("mu","delta","tau","sigma")
   }  
   
   if (outcome=="ctns" & type=="fix" & model=="reg.mv" ){
@@ -135,7 +135,7 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
   }    
   
   if (outcome=="ctns" & type=="ran" & model=="reg.mv"){
-    params <- c("alpha","tau.alpha","mu")
+    params <- c("alpha","tau","mu","sigma")
   }  
   
   if (outcome=="count" & type=="fix"){
@@ -143,7 +143,7 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
   }
   
   if (outcome=="count" & type=="ran"){
-    params <- c("lambda0","lambda1","mu","delta","tau.delta","IRR","gamma")
+    params <- c("lambda0","lambda1","mu","delta","tau","IRR","gamma","sigma")
   }
   
   
@@ -154,31 +154,48 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
   
   ### Binary outcome###
   
-  if (outcome=="bin" & type=="fix" & (model=="std.norm"|model=="std.dt")){  
-    list.temp <- list(alpha=rnorm(S,0,1),delta=rnorm(1))
+  if (outcome=="bin" & type=="fix" & model=="std.norm"){  
+    list.temp <- list(alpha=rnorm(S),delta=rnorm(1))
   }
   
-  if (outcome=="bin" & type=="ran" & (model=="std.norm"|model=="std.dt")){
-    list.temp <- list(alpha=rnorm(S,0,1),delta=rnorm(S,0,1),mu=rnorm(1),sigma.delta=runif(1))  
+  if (outcome=="bin" & type=="fix" & model=="std.dt"){  
+    list.temp <- list(alpha=rnorm(S),v=runif(1))
   }
   
-  if (outcome=="bin" & type=="fix" & (model=="reg.norm"|model=="reg.dt")){
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),alpha=rnorm(S,0,1),delta=rnorm(1))  
-  }  
+  if (outcome=="bin" & type=="ran" & model=="std.norm"){
+    list.temp <- list(alpha=rnorm(S),delta=rnorm(S),mu=rnorm(1),sigma=runif(1))  
+  }
   
-  if (outcome=="bin" & type=="ran" & (model=="reg.norm"|model=="reg.dt")){
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),alpha=rnorm(S,0,1),delta=rnorm(S,0,1),
-                      mu=rnorm(1),sigma.delta=runif(1))  
+  if (outcome=="bin" & type=="ran" & model=="std.dt"){
+    list.temp <- list(alpha=rnorm(S),delta=rnorm(S),v=runif(1),sigma=runif(1))  
+  }
+  
+  if (outcome=="bin" & type=="fix" & model=="reg.norm"){
+    list.temp <- list(beta0=rnorm(dataJags$J),alpha=rnorm(S),delta=rnorm(1))  
+  } 
+  
+  if (outcome=="bin" & type=="fix" & model=="reg.dt"){
+    list.temp <- list(beta0=rnorm(dataJags$J),alpha=rnorm(S),v=runif(1))  
+  } 
+  
+  if (outcome=="bin" & type=="ran" & model=="reg.norm"){
+    list.temp <- list(beta0=rnorm(dataJags$J),alpha=rnorm(S),delta=rnorm(S),
+                      mu=rnorm(1),sigma=runif(1))  
+  }
+  
+  if (outcome=="bin" & type=="ran" & model=="reg.dt"){
+    list.temp <- list(beta0=rnorm(dataJags$J),alpha=rnorm(S),delta=rnorm(S),
+                      v=runif(1),sigma=runif(1))  
   }
   
   ### Continuous outcome ###
   
   if (outcome=="ctns" & type=="fix" & model=="std.ta"){  
-    list.temp <- list(alpha0=rnorm(S,0,1),delta=rnorm(1))
+    list.temp <- list(alpha0=rnorm(S),delta=rnorm(1))
   }
   
   if (outcome=="ctns" & type=="ran" & model=="std.ta"){  
-    list.temp <- list(alpha0=rnorm(S,0,1),mu=rnorm(1),sigma=runif(1))
+    list.temp <- list(alpha0=rnorm(S),mu=rnorm(1),sigma=runif(1))
   }
   
   if (outcome=="ctns" & type=="fix" & model=="std.mv"){  
@@ -190,45 +207,45 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
   }
   
   if (outcome=="ctns" & type=="fix" & model=="reg.ta"){  
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),gamma0=rnorm(S,0,1),delta=rnorm(1))
+    list.temp <- list(beta0=rnorm(dataJags$J),gamma0=rnorm(S),delta=rnorm(1))
   }
   
   if (outcome=="ctns" & type=="ran" & model=="reg.ta"){  
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),gamma0=rnorm(S,0,1),mu=rnorm(1),sigma=runif(1))
+    list.temp <- list(beta0=rnorm(dataJags$J),gamma0=rnorm(S),mu=rnorm(1),sigma=runif(1))
   }
   
   if (outcome=="ctns" & type=="fix" & model=="reg.mv"){  
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),alpha=rnorm(1))
+    list.temp <- list(beta0=rnorm(dataJags$J),alpha=rnorm(1))
   }
   
   if (outcome=="ctns" & type=="ran" & model=="reg.mv"){  
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),mu=rnorm(1),sigma=runif(1))
+    list.temp <- list(beta0=rnorm(dataJags$J),mu=rnorm(1),sigma=runif(1))
   }
   
   ### Count outcome ###
   
   if (outcome=="count" & model=="std"){  
-    list.temp <- list(lograte0=runif(S,0,1),delta=rnorm(1))
+    list.temp <- list(xi0=runif(S),delta=rnorm(1))
   } 
   
   if (outcome=="count" & model=="std.unif"){  
-    list.temp <- list(lograte0=runif(S,0,1),mu=rnorm(1),sigma=runif(1))
+    list.temp <- list(xi0=runif(S),mu=rnorm(1),sigma=runif(1))
   } 
   
   if (outcome=="count" & model=="std.hc"){  
-    list.temp <- list(lograte0=runif(S,0,1),mu=rnorm(1),z.sigma=rnorm(1),epsilon.sigma=rgamma(1,0.5,0.5),B.sigma=runif(1,0,0.5))
+    list.temp <- list(xi0=runif(S),mu=rnorm(1),z.sigma=rnorm(1),epsilon.sigma=rgamma(1,0.5,0.5),B.sigma=runif(1,0,0.5))
   } 
   
   if (outcome=="count" & model=="reg"){  
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),logbrate=runif(S,0,1),delta=rnorm(1))
+    list.temp <- list(beta0=rnorm(dataJags$J),theta=runif(S),delta=rnorm(1))
   } 
   
   if (outcome=="count" & model=="reg.unif"){  
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),logbrate=runif(S,0,1),mu=rnorm(1),sigma=runif(1))
+    list.temp <- list(beta0=rnorm(dataJags$J),theta=runif(S),mu=rnorm(1),sigma=runif(1))
   } 
   
   if (outcome=="count" & model=="reg.hc"){  
-    list.temp <- list(beta0=rnorm(dataJags$J,0,1),logbrate=runif(S,0,1),mu=rnorm(1),z.sigma=rnorm(1),epsilon.sigma=rgamma(1,0.5,0.5),B.sigma=runif(1,0,0.5))
+    list.temp <- list(beta0=rnorm(dataJags$J),theta=runif(S),mu=rnorm(1),z.sigma=rnorm(1),epsilon.sigma=rgamma(1,0.5,0.5),B.sigma=runif(1,0,0.5))
   } 
   
   inits <- function(){
@@ -315,18 +332,18 @@ bmeta.default<- function(data,outcome=c("bin","ctns","count"),model=c("std.norm"
         for (s in 1:S) {
         y0[s] ~ dpois(lambda0[s])
         y1[s] ~ dpois(lambda1[s])
-        log(lambda0[s]) <- lograte0[s]+log(pt0[s])
-        log(lambda1[s]) <- lograte1[s]+log(pt1[s])
-        lograte0[s] ~ dunif(-5,5)
-        lograte1[s] ~ dunif(-5,5)
-        irr[s] <- exp(lograte1[s]-lograte0[s])
-        lirr[s] <- lograte1[s]-lograte0[s]
+        log(lambda0[s]) <- xi0[s]+log(p0[s])
+        log(lambda1[s]) <- xi1[s]+log(p1[s])
+        xi0[s] ~ dunif(-5,5)
+        xi1[s] ~ dunif(-5,5)
+        IRR[s] <- exp(xi1[s]-xi0[s])
+        lIRR[s] <- xi1[s]-xi0[s]
         }
   }",file=file0)
-    dataJags0<-list(S=S,y0=data$y0,pt0=data$pt0,y1=data$y1,pt1=data$pt1)
-    param0 <- c("irr","lirr")
+    dataJags0<-list(S=S,y0=data$y0,p0=data$p0,y1=data$y1,p1=data$p1)
+    param0 <- c("IRR","lIRR")
     inits0 <- function(){
-      list(lograte0=runif(S,0,1),lograte1=runif(S,0,1))
+      list(xi0=runif(S,0,1),xi1=runif(S,0,1))
     }
   }
   
@@ -353,10 +370,13 @@ print.bmeta<-function(x,...){
 
 
 ##### POSTERIOR PLOT ##### 
-posterior.plot<-function(x,xlim=NULL,xlab="",main="Posterior distribution Plot",scale="log"){
+posterior.plot<-function(x,xlim=NULL,xlab="",main="Posterior distribution Plot",scale="log",
+                         heterogeneity=FALSE){
   requireNamespace("R2jags",quietly=TRUE)
   
   param.sims <- x$mod$BUGSoutput$sims.matrix
+  
+  if (heterogeneity==FALSE){
   if (x$outcome=="bin" & x$type=="fix"){ 
     if(scale=="log") {param <- param.sims[,"delta"]} 
     if(scale=="exp") {param <- param.sims[,"rho"]}
@@ -495,10 +515,27 @@ posterior.plot<-function(x,xlim=NULL,xlab="",main="Posterior distribution Plot",
     if(scale=="log") {abline(v=0,lwd=2)}
     if(scale=="exp") {abline(v=1,lwd=2)}
   }
-  
-  
-  
+
+  } else {
+    
+    if(x$type=="fix"){
+      print("Heterogeneity test is designed for random-effects models.")
+    } else {
+    param<-param.sims[,"sigma"]
+      if(is.null(xlim)){
+      hist(param,30,xlim=c(0,5),main=main,xlab=xlab,ylab="density",freq=FALSE)
+    } else {
+      hist(param,30,xlim=c(xlim[1],xlim[2]),main=main,
+           xlab=xlab,ylab="density",freq=FALSE)
+    }
+      points(c(quantile(param,.025),quantile(param,.025),quantile(param,.975)),c(0,0,0),lwd=5,type="l")
+      
+    } 
+  }  
 }
+  
+  
+
 
 
 
@@ -629,8 +666,8 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
     }
     
     if(x$outcome=="count"){
-      ind <- which((substr(rownames(tab0),1,4)=="lirr")==TRUE)
-      ind0 <- which((substr(rownames(tab0),1,3)=="irr")==TRUE)
+      ind <- which((substr(rownames(tab0),1,4)=="lIRR")==TRUE)
+      ind0 <- which((substr(rownames(tab0),1,3)=="IRR")==TRUE)
       ind1 <- which((substr(rownames(tab),1,3)=="IRR")==TRUE)
       ind2 <- which((substr(rownames(tab),1,5)=="delta")==TRUE)
       
@@ -694,13 +731,13 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
     }
     
     if(x$outcome=="count" & log==TRUE){
-      ind0 <- which((substr(rownames(tab0),1,4)=="lirr")==TRUE)
+      ind0 <- which((substr(rownames(tab0),1,4)=="lIRR")==TRUE)
       ind1 <- which((substr(rownames(tab),1,5)=="delta")==TRUE)
       ind2 <- which((substr(rownames(tab),1,2)=="mu")==TRUE) 
     } 
     
     if(x$outcome=="count" & log==FALSE){
-      ind0 <- which((substr(rownames(tab0),1,3)=="irr")==TRUE)
+      ind0 <- which((substr(rownames(tab0),1,3)=="IRR")==TRUE)
       ind1 <- which((substr(rownames(tab),1,5)=="gamma")==TRUE)
       ind2 <- which((substr(rownames(tab),1,3)=="IRR")==TRUE)
     }
@@ -793,11 +830,17 @@ forest.plot <- function(x,title=NULL,xlab=NULL,log=FALSE,study.label=NULL,clip=c
 
 
 ###### Funnel Plot #####
-funnel.plot<-function(x,xlab=NULL,ylab=NULL,title=NULL){
+funnel.plot<-function(x,xlab=NULL,ylab=NULL,title=NULL,xlim=NULL){
+  
+  quiet <- function(x) { 
+    sink(tempfile()) 
+    on.exit(sink()) 
+    invisible(force(x)) 
+  } 
   
   tab0 <- x$mod0$BUGSoutput$summary
-  tab <- x$mod$BUGSoutput$summary 
-  
+  tab <- x$mod$BUGSoutput$summary
+   
   if (is.null(xlab)){
     xlab="effect"
   }
@@ -809,61 +852,438 @@ funnel.plot<-function(x,xlab=NULL,ylab=NULL,title=NULL){
   if (x$type=="fix") {
     
     if(x$outcome=="bin"){
-      ind <- which((substr(rownames(tab0),1,3)=="lor")==TRUE)
-      plot(tab0[ind,1],1/tab0[ind,2],xlab=xlab,ylab=ylab,main=title)
-      abline(v=0,lty=2)
+      ind0 <- which((substr(rownames(tab0),1,3)=="lor")==TRUE)
+      ind <- which((substr(rownames(tab),1,5)=="delta")==TRUE)
+      
     } 
     
     if(x$outcome=="ctns") {
       
       if(x$model=="std.ta" | x$model=="reg.ta"){
-        ind <- which((substr(rownames(tab0),1,4)=="diff")==TRUE)
+        ind0 <- which((substr(rownames(tab0),1,4)=="diff")==TRUE)
+        ind <- which((substr(rownames(tab),1,5)=="delta")==TRUE)
       }
       
-      if(x$model=="std.mv" | x$model=="reg.mv"){
-        ind <- which((substr(rownames(tab0),1,2)=="mu")==TRUE)   
-      }     
+      if(x$model=="std.mv"){
+        ind0 <- which((substr(rownames(tab0),1,2)=="mu")==TRUE)  
+        ind <- which((substr(rownames(tab),1,2)=="mu")==TRUE) 
+      } 
       
-      plot(tab0[ind,1],1/tab0[ind,2],xlab=xlab,ylab=ylab,main=title)
-      abline(v=0,lty=2)
+      if(x$model=="reg.mv"){
+        ind0 <- which((substr(rownames(tab0),1,2)=="mu")==TRUE)  
+        ind <- which((substr(rownames(tab),1,5)=="alpha")==TRUE) 
+      }
+      
     }
     
     if(x$outcome=="count"){
-      
-      ind <- which((substr(rownames(tab0),1,4)=="lirr")==TRUE)      
-      plot(tab0[ind,1],1/tab0[ind,2],xlab=xlab,ylab=ylab,main=title)
-      abline(v=0,lty=2)
-      
+      ind0 <- which((substr(rownames(tab0),1,4)=="lIRR")==TRUE)      
+      ind <- which((substr(rownames(tab),1,5)=="delta")==TRUE)
     } 
+    
+    if(is.null(xlim)){
+      plot(tab0[ind0,1],tab0[ind0,2],ylim=c(max(tab0[ind0,2]),0),
+           xlab=xlab,ylab=ylab,main=title,xlim=c(-6,6))
+    } else {
+      plot(tab0[ind0,1],tab0[ind0,2],ylim=c(max(tab0[ind0,2]),0),
+           xlab=xlab,ylab=ylab,main=title,xlim=c(xlim[1],xlim[2]))
+    }
+    abline(v=tab[ind,1])
+    segments(tab[ind,1]-(max(tab0[ind0,2])*1.96),max(tab0[ind0,2]),
+             tab[ind,1],0,lty=2)
+    segments(tab[ind,1]+(max(tab0[ind0,2])*1.96),max(tab0[ind0,2]),
+             tab[ind,1],0,lty=2)
     
   }
   
   if(x$type=="ran"){
+    
+    if(!is.null(x$data$J)) {
+      threshold<- 1e-12
+      Z0<-x$data$Z0
+      for (j in 1:x$data$J) {
+        if (mean(x$data$Z0[,j])>threshold) {
+          Z0[,j]<-scale(x$data$Z0[,j],scale=FALSE)
+        }
+      }      
+    }
+    
+    file1 <- "file1.txt"
+    
+    if (x$outcome=="bin" & x$model=="std.norm") {
+      cat("model {   
+          for (s in 1:S){
+          y0[s]~dbin(pi0[s],n0[s])
+          y1[s]~dbin(pi1[s],n1[s])
+          logit(pi0[s])<-alpha[s]
+          logit(pi1[s])<-alpha[s]+delta
+          alpha[s]~dnorm(0,0.0001)
+          }
+          ###prior###
+          delta~dnorm(0,0.0001)
+          rho<-exp(delta)
+    }",file=file1)
+    dataJags1<-list(S=x$data$S,y0=x$data$y0,n0=x$data$n0,y1=x$data$y1,n1=x$data$n1)
+    param1 <- c("delta")
+    inits1 <- function(){
+      list(delta=rnorm(1),alpha=rnorm(x$data$S))
+    }
+  }
+    
+    if (x$outcome=="bin" & x$model=="reg.norm") {
+
+      if(x$data$J==1) { 
+        cat(" 
+        model {  
+        for (s in 1:S){
+        y0[s]~dbin(pi0[s],n0[s])
+        y1[s]~dbin(pi1[s],n1[s])
+        logit(pi0[s])<-alpha[s]+Z0[s,]%*%beta0
+        logit(pi1[s])<-alpha[s]+Z0[s,]%*%beta0+delta
+        alpha[s]~dnorm(0,0.0001)
+        }
+        ###prior###
+        beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])
+        delta~dnorm(0,0.0001)
+        rho<-exp(delta)
+        } ",file=file1)
+      
+      } else {
+        cat(" 
+        model {  
+        for (s in 1:S){
+        y0[s]~dbin(pi0[s],n0[s])
+        y1[s]~dbin(pi1[s],n1[s])
+        logit(pi0[s])<-alpha[s]+Z0[s,]%*%beta0
+        logit(pi1[s])<-alpha[s]+Z0[s,]%*%beta0+delta
+        alpha[s]~dnorm(0,0.0001)
+        }
+        ###prior###
+        beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])
+        delta~dnorm(0,0.0001)
+        rho<-exp(delta)
+        }",file=file1)   
+      
+    }         
+      
+      dataJags1<-list(S=x$data$S,y0=x$data$y0,n0=x$data$n0,y1=x$data$y1,n1=x$data$n1,
+                      J=x$data$J,Z0=Z0,m.beta0=rep(0,x$data$J), 
+                      tau.beta0=.0001*diag(x$data$J))
+      param1 <- c("delta")
+      inits1 <- function(){
+        list(delta=rnorm(1),beta0=rnorm(x$data$J),alpha=rnorm(x$data$S))
+      }
+}
+    
+    if (x$outcome=="bin" & x$model=="std.dt") {
+      cat("model {   
+          for (s in 1:S){
+          y0[s]~dbin(pi0[s],n0[s])
+          y1[s]~dbin(pi1[s],n1[s])
+          logit(pi0[s])<-alpha[s]
+          logit(pi1[s])<-alpha[s]+delta
+          alpha[s]~dnorm(0,0.0001)
+    }
+          ###prior###
+          delta~dt(0,0.5,v)
+          v~dunif(0,8)
+          rho<-exp(delta)
+  }",file=file1)
+    dataJags1<-list(S=x$data$S,y0=x$data$y0,n0=x$data$n0,y1=x$data$y1,n1=x$data$n1)
+    param1 <- c("delta")
+    inits1 <- function(){
+      list(v=runif(1),alpha=rnorm(x$data$S))
+    } 
+  }
+   
+    if (x$outcome=="bin" & x$model=="reg.dt") {
+      
+      if(x$data$J==1) { 
+        cat(" 
+            model {  
+            for (s in 1:S){
+            y0[s]~dbin(pi0[s],n0[s])
+            y1[s]~dbin(pi1[s],n1[s])
+            logit(pi0[s])<-alpha[s]+Z0[s,]%*%beta0
+            logit(pi1[s])<-alpha[s]+Z0[s,]%*%beta0+delta
+            alpha[s]~dnorm(0,0.0001)
+            }
+            ###prior###
+            beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])
+            delta~dt(0,0.5,v)
+            v~dunif(0,8)
+            rho<-exp(delta)
+            } ",file=file1)
+      
+      } else {
+        cat(" 
+            model {  
+            for (s in 1:S){
+            y0[s]~dbin(pi0[s],n0[s])
+            y1[s]~dbin(pi1[s],n1[s])
+            logit(pi0[s])<-alpha[s]+Z0[s,]%*%beta0
+            logit(pi1[s])<-alpha[s]+Z0[s,]%*%beta0+delta
+            alpha[s]~dnorm(0,0.0001)
+            }
+            ###prior###
+            beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])
+            delta~dt(0,0.5,v)
+            v~dunif(0,8)
+            rho<-exp(delta)
+            }",file=file1)   
+      
+    }         
+      dataJags1<-list(S=x$data$S,y0=x$data$y0,n0=x$data$n0,y1=x$data$y1,n1=x$data$n1,
+                      J=x$data$J,Z0=Z0,m.beta0=rep(0,x$data$J), 
+                      tau.beta0=.0001*diag(x$data$J))
+      param1 <- c("delta")
+      inits1 <- function(){
+        list(v=runif(1),beta0=rnorm(x$data$J),alpha=rnorm(x$data$S))
+      }
+    }
+    
+    
+    if (x$outcome=="ctns" & x$model=="std.ta"){
+      cat("model{   
+          for(s in 1:S) { 
+          y0[s]~dnorm(alpha0[s],prec0[s])       
+          y1[s]~dnorm(alpha1[s],prec1[s])       
+          alpha1[s]<-alpha0[s]+delta
+          prec0[s]<-pow(se0[s],-2)
+          prec1[s]<-pow(se1[s],-2)
+          alpha0[s]~dnorm(0,0.0001)
+        }
+        ###prior###
+        delta~dnorm(0,0.0001)
+      }",file=file1) 
+      dataJags1<-list(S=x$data$S,y0=x$data$y0,se0=x$data$se0,y1=x$data$y1,se1=x$data$se1)
+      param1 <- c("delta")
+      inits1 <- function(){
+        list(delta=rnorm(1),alpha0=rnorm(x$data$S))
+      } 
+    }
+    
+    
+    if (x$outcome=="ctns" & x$model=="reg.ta"){
+      if(x$data$J==1) {
+          cat("model{ 
+            for(s in 1:S) { 
+              y0[s]~dnorm(alpha0[s],prec0[s])       
+              y1[s]~dnorm(alpha1[s],prec1[s])       
+              alpha1[s]<-alpha0[s]+delta
+              prec0[s]<-pow(se0[s],-2)
+              prec1[s]<-pow(se1[s],-2)
+              alpha0[s]<-gamma0[s]+Z0[s,]%*%beta0
+              gamma0[s]~dnorm(0,0.0001)
+            }
+            ###prior###
+            beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])      
+            delta~dnorm(0,0.0001)
+          }",file=file1)
+    } else { 
+          cat("
+          model{ 
+            for(s in 1:S) { 
+              y0[s]~dnorm(alpha0[s],prec0[s])       
+              y1[s]~dnorm(alpha1[s],prec1[s])       
+              
+              alpha1[s]<-alpha0[s]+delta
+              prec0[s]<-pow(se0[s],-2)
+              prec1[s]<-pow(se1[s],-2)
+              alpha0[s]<-gamma0[s]+Z0[s,]%*%beta0
+              gamma0[s]~dnorm(0,0.0001)
+            }
+            ###prior###
+            beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])     
+            delta~dnorm(0,0.0001)
+          }",file=file1) 
+      
+}
+      dataJags1<-list(S=x$data$S,y0=x$data$y0,se0=x$data$se0,y1=x$data$y1,se1=x$data$se1,
+                      J=x$data$J,Z0=Z0,m.beta0=rep(0,x$data$J), 
+                      tau.beta0=.0001*diag(x$data$J))
+      param1 <- c("delta")
+      inits1 <- function(){
+        list(delta=rnorm(1),beta0=rnorm(x$data$J),gamma0=rnorm(x$data$S))
+      } 
+}
+    
+    
+    if (x$outcome=="ctns" & x$model=="std.mv"){
+      cat("model{  
+        for(s in 1:S){
+          y[s]~dnorm(mu,prec[s])
+        }
+        ###prior###
+        mu~dnorm(0,0.0001)
+      }",file=file1)
+      dataJags1<-list(S=x$data$S,y=x$data$y,prec=x$data$prec)
+      param1 <- c("mu")
+      inits1 <- function(){
+        list(mu=rnorm(1))
+      } 
+    }
+    
+    
+    if (x$outcome=="ctns" & x$model=="reg.mv"){
+      if(x$data$J==1){
+        cat("
+        model{ 
+        for(s in 1:S){
+        y[s]~dnorm(delta[s],prec[s])        
+        delta[s]<-alpha+Z0[s,]%*%beta0
+        
+        }
+        ###prior###
+        beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])       
+        alpha~dnorm(0,0.0001)
+        }",file=file1)
+    } else {
+      cat("
+      model{ 
+      for(s in 1:S){ 
+      y[s]~dnorm(delta[s],prec[s])        
+      delta[s]<-alpha+Z0[s,]%*%beta0
+      
+      }
+      ###prior###
+      beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])       
+      alpha~dnorm(0,0.0001)
+      
+      }",file=file1)
+    }
+      dataJags1<-list(S=x$data$S,y=x$data$y,prec=x$data$prec,J=x$data$J,Z0=Z0,
+                      m.beta0=rep(0,x$data$J),tau.beta0=.0001*diag(x$data$J))
+      param1 <- c("alpha")
+      inits1 <- function(){
+        list(alpha=rnorm(1),beta0=rnorm(x$data$J))
+      } 
+    }
+    
+    
+    if (x$outcome=="count" & (x$model=="std.unif"|x$model=="std.hc")){
+       cat("model{  
+        for(s in 1:S){
+          y0[s]~dpois(lambda0[s])
+          y1[s]~dpois(lambda1[s])
+          log(lambda0[s])<-xi0[s]+log(p0[s])
+          log(lambda1[s])<-xi1[s]+log(p1[s])
+          xi0[s]~dunif(-5,5)
+          xi1[s]<-xi0[s]+delta      ### delta is the log rate-ratio
+        }
+        ### Prior ###
+        delta~dnorm(0,0.0001)
+        IRR<-exp(delta)
+      }",file=file1)  
+      dataJags1<-list(S=x$data$S,y0=x$data$y0,p0=x$data$p0,y1=x$data$y1,p1=x$data$p1)
+      param1 <- c("delta")
+      inits1 <- function(){
+        list(delta=rnorm(1),xi0=runif(x$data$S))
+      } 
+    }
+    
+    
+    if (x$outcome=="count" & (x$model=="reg.unif"|x$model=="reg.hc")){
+      if(x$data$J==1){
+        cat("
+        model{ 
+        for(s in 1:S){
+        y0[s]~dpois(lambda0[s])
+        y1[s]~dpois(lambda1[s])
+        log(lambda0[s])<-xi0[s]+log(p0[s])
+        log(lambda1[s])<-xi1[s]+log(p1[s])
+        xi0[s]<-theta[s]+Z0[s,]%*%beta0   
+        theta[s]~dunif(-5,5)
+        xi1[s]<-xi0[s]+delta
+        }
+        ### Prior ###
+        beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])
+        delta~dnorm(0,0.0001)
+        IRR<-exp(delta)
+        }",file=file1)
+    } else {
+      cat("
+      model{ 
+      for(s in 1:S){
+      y0[s]~dpois(lambda0[s])
+      y1[s]~dpois(lambda1[s])
+      log(lambda0[s])<-xi0[s]+log(p0[s])
+      log(lambda1[s])<-xi1[s]+log(p1[s])
+      xi0[s]<-theta[s]+Z0[s,]%*%beta0   
+      theta[s]~dunif(-5,5)
+      xi1[s]<-xi0[s]+delta
+      }
+      ### Prior ###
+      beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])
+      delta~dnorm(0,0.0001)
+      IRR<-exp(delta)
+      }",file=file1)
+    }
+      dataJags1<-list(S=x$data$S,y0=x$data$y0,p0=x$data$p0,y1=x$data$y1,p1=x$data$p1,
+                      J=x$data$J,Z0=Z0,m.beta0=rep(0,x$data$J),
+                      tau.beta0=.0001*diag(x$data$J))
+      param1 <- c("delta")
+      inits1 <- function(){
+        list(delta=rnorm(1),beta0=rnorm(x$data$J),theta=runif(x$data$S))
+      } 
+}
+  
+  
+    # Now also run the fixed-effects model
+    working.dir <- getwd()  # defines the current directory to work in
+    quiet(mod1 <- R2jags::jags(dataJags1,inits1,param1,model.file="file1.txt",n.chains=2,
+                               n.iter=10000,n.burnin=5000,n.thin=1,DIC=TRUE,
+                               working.directory=working.dir, progress.bar="text"))
+    
+    unlink(file1,force=TRUE)  # Now deletes the file "file1.txt" from current directory
+    
+    
+    tab1 <- mod1$BUGSoutput$summary
+    
     if(x$outcome=="bin"){
-      ind1 <- which((substr(rownames(tab),1,5)=="delta")==TRUE)
-      ind2 <- which((substr(rownames(tab),1,2)=="mu")==TRUE) 
+      ind1 <- which((substr(rownames(tab0),1,3)=="lor")==TRUE)
+      ind2 <- which((substr(rownames(tab1),1,5)=="delta")==TRUE) 
     } 
     
     
-    if(x$outcome=="ctns" & (x$model=="std.ta"|x$model=="std.mv"|x$model=="reg.ta")){
-      ind1 <- which((substr(rownames(tab),1,5)=="delta")==TRUE)
-      ind2 <- which((substr(rownames(tab),1,2)=="mu")==TRUE)
+    if(x$outcome=="ctns" & (x$model=="std.ta" | x$model=="reg.ta")){
+      ind1 <- which((substr(rownames(tab0),1,4)=="diff")==TRUE)
+      ind2 <- which((substr(rownames(tab1),1,5)=="delta")==TRUE)
+    }
+    
+    
+    if(x$outcome=="ctns" & x$model=="std.mv"){
+      ind1 <- which((substr(rownames(tab0),1,2)=="mu")==TRUE)
+      ind2 <- which((substr(rownames(tab1),1,2)=="mu")==TRUE)
     }
     
     if(x$outcome=="ctns" & x$model=="reg.mv"){
-      ind1 <- which((substr(rownames(tab),1,5)=="alpha")==TRUE)
-      ind2 <- which((substr(rownames(tab),1,2)=="mu")==TRUE)
+      ind1 <- which((substr(rownames(tab0),1,2)=="mu")==TRUE)
+      ind2 <- which((substr(rownames(tab1),1,5)=="alpha")==TRUE)
     }
     
+    
     if(x$outcome=="count"){
-      ind1 <- which((substr(rownames(tab),1,5)=="delta")==TRUE)
-      ind2 <- which((substr(rownames(tab),1,2)=="mu")==TRUE) 
+      ind1 <- which((substr(rownames(tab0),1,4)=="lIRR")==TRUE)
+      ind2 <- which((substr(rownames(tab1),1,5)=="delta")==TRUE) 
     } 
     
-    plot(tab[ind1,1],1/tab[ind1,2],xlab=xlab,ylab=ylab,main=title)
-    abline(v=0,lty=2)
     
-  } 
+    if(is.null(xlim)){
+      plot(tab0[ind1,1],tab0[ind1,2],ylim=c(max(tab0[ind1,2]),0),
+         xlab=xlab,ylab=ylab,main=title,xlim=c(-6,6))
+    } else {
+      plot(tab0[ind1,1],tab0[ind1,2],ylim=c(max(tab0[ind1,2]),0),
+           xlab=xlab,ylab=ylab,main=title,xlim=c(xlim[1],xlim[2]))
+    }
+      abline(v=tab1[ind2,1])
+    
+      segments(tab1[ind2,1]-(max(tab0[ind1,2])*1.96),max(tab0[ind1,2]),
+             tab1[ind2,1],0,lty=2)
+      segments(tab1[ind2,1]+(max(tab0[ind1,2])*1.96),max(tab0[ind1,2]),
+             tab1[ind2,1],0,lty=2)
+    
+   } 
   
 }
 
@@ -950,7 +1370,8 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.bin.std.norm.fix<-" 
-  model {   \n## a. binary standard fixed-effects meta-analysis with normal prior
+  ## a. binary standard fixed-effects meta-analysis with normal prior
+  \n model {   
   for (s in 1:S){
   y0[s]~dbin(pi0[s],n0[s])
   y1[s]~dbin(pi1[s],n1[s])
@@ -968,7 +1389,8 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.bin.std.dt.fix<-" 
-  model {  \n## b. binary standard fixed-effects meta-analysis with t-distribution prior
+  ## b. binary standard fixed-effects meta-analysis with t-distribution prior
+  \n model {  
   for (s in 1:S){
   y0[s]~dbin(pi0[s],n0[s])
   y1[s]~dbin(pi1[s],n1[s])
@@ -988,7 +1410,8 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.bin.std.norm.ran<-"
-  model{  \n## c. binary standard random-effects meta-analysis with normal prior 
+  ## c. binary standard random-effects meta-analysis with normal prior 
+  \n model{  
   for (s in 1:S){
   y0[s]~dbin(pi0[s],n0[s])
   y1[s]~dbin(pi1[s],n1[s])
@@ -996,13 +1419,13 @@ writeModel<-function(outcome,model,type,model.file,data){
   logit(pi1[s])<-alpha[s]+delta[s]
   
   alpha[s]~dnorm(0,0.0001)
-  delta[s]~dnorm(mu,tau.delta)
+  delta[s]~dnorm(mu,tau)
   gamma[s]<-exp(delta[s])
   }
   ###prior###
   mu~dnorm(0,0.0001)
-  sigma.delta~dunif(0,5)
-  tau.delta<-pow(sigma.delta,-2)
+  sigma~dunif(0,5)
+  tau<-pow(sigma,-2)
   rho<-exp(mu)
   } "
   
@@ -1012,20 +1435,21 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.bin.std.dt.ran<-"
-  model{  \n## d. binary standard random-effects meta-analysis with t-distribution prior
+  ## d. binary standard random-effects meta-analysis with t-distribution prior
+  \n model{  
   for (s in 1:S){
   y0[s]~dbin(pi0[s],n0[s])
   y1[s]~dbin(pi1[s],n1[s])
   logit(pi0[s])<-alpha[s]
   logit(pi1[s])<-alpha[s]+delta[s]
   
-  delta[s]~dnorm(mu,tau.delta)
+  delta[s]~dnorm(mu,tau)
   alpha[s]~dnorm(0,0.0001)
   gamma[s]<-exp(delta[s])
   }
   ###Prior###
-  sigma.delta~dunif(0,5)
-  tau.delta<-pow(sigma.delta,-2)
+  sigma~dunif(0,5)
+  tau<-pow(sigma,-2)
   mu~dt(0,0.5,v)
   v~dunif(0,8)
   rho<-exp(mu)
@@ -1040,7 +1464,8 @@ writeModel<-function(outcome,model,type,model.file,data){
   if(!is.null(data$J)) {
     
     sel.mod.bin.reg.norm.fix<-if(data$J==1) { " 
-      model {  \n## a. binary fixed-effects meta-regression with normal prior
+      ## a. binary fixed-effects meta-regression with normal prior
+      \n model {  
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
@@ -1057,7 +1482,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       
     } else {
       " 
-      model {  \n## a. binary fixed-effects meta-regression with normal prior
+      ## a. binary fixed-effects meta-regression with normal prior
+      \n model {  
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
@@ -1082,8 +1508,9 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     
     sel.mod.bin.reg.dt.fix<-if(data$J==1) {
-      " 
-      model {  \n## b. binary fixed-effects meta-regression with t-distribution prior
+      "
+      ## b. binary fixed-effects meta-regression with t-distribution prior
+      \n model {  
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
@@ -1100,7 +1527,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       } "
     } else {
       "
-      model {  \n## b. binary fixed-effects meta-regression with t-distribution prior
+      ## b. binary fixed-effects meta-regression with t-distribution prior
+      \n model {  
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
@@ -1121,7 +1549,8 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     sel.mod.bin.reg.norm.ran<-if(data$J==1) {
       "
-      model {  \n## c. binary random-effects meta-regression with normal prior
+      ## c. binary random-effects meta-regression with normal prior
+      \n model {  
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
@@ -1129,20 +1558,21 @@ writeModel<-function(outcome,model,type,model.file,data){
       logit(pi1[s])<-alpha[s]+Z0[s,]%*%beta0+delta[s]
       
       alpha[s]~dnorm(0,0.0001)
-      delta[s]~dnorm(mu,tau.delta)
+      delta[s]~dnorm(mu,tau)
       gamma[s]<-exp(delta[s])
       }
       ###prior###
       beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])
       
       mu~dnorm(0,0.0001)
-      sigma.delta~dunif(0,5)
-      tau.delta<-pow(sigma.delta,-2)
+      sigma~dunif(0,5)
+      tau<-pow(sigma,-2)
       rho<-exp(mu)
       } "
     } else {
       "
-      model {  \n## c. binary random-effects meta-regression with normal prior
+      ## c. binary random-effects meta-regression with normal prior
+      \n model {  
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
@@ -1150,15 +1580,15 @@ writeModel<-function(outcome,model,type,model.file,data){
       logit(pi1[s])<-alpha[s]+Z0[s,]%*%beta0+delta[s]
       
       alpha[s]~dnorm(0,0.0001)
-      delta[s]~dnorm(mu,tau.delta)
+      delta[s]~dnorm(mu,tau)
       gamma[s]<-exp(delta[s])
       }
       ###prior###
       beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])
       
       mu~dnorm(0,0.0001)
-      sigma.delta~dunif(0,5)
-      tau.delta<-pow(sigma.delta,-2)
+      sigma~dunif(0,5)
+      tau<-pow(sigma,-2)
       rho<-exp(mu)
       } "
     }
@@ -1168,44 +1598,46 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     sel.mod.bin.reg.dt.ran<-if(data$J==1) {
       " 
-      model {  \n## d. binary random-effects meta-regression with t-distribution prior
+      ## d. binary random-effects meta-regression with t-distribution prior
+      \n model {  
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
       logit(pi0[s])<-alpha[s]+Z0[s,]%*%beta0
       logit(pi1[s])<-alpha[s]+Z0[s,]%*%beta0+delta[s]
       
-      delta[s]~dnorm(mu,tau.delta)
+      delta[s]~dnorm(mu,tau)
       alpha[s]~dnorm(0,0.0001)
       gamma[s]<-exp(delta[s])
       }
       ###Prior###
       beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])
       
-      sigma.delta~dunif(0,5)
-      tau.delta<-pow(sigma.delta,-2)
+      sigma~dunif(0,5)
+      tau<-pow(sigma,-2)
       mu~dt(0,0.5,v)
       v~dunif(0,8)
       rho<-exp(mu)
       } "
     } else {
       "
-      model {  \n## d. binary random-effects meta-regression with t-distribution prior
+      ## d. binary random-effects meta-regression with t-distribution prior
+      \n model {  
       for (s in 1:S){
       y0[s]~dbin(pi0[s],n0[s])
       y1[s]~dbin(pi1[s],n1[s])
       logit(pi0[s])<-alpha[s]+Z0[s,]%*%beta0
       logit(pi1[s])<-alpha[s]+Z0[s,]%*%beta0+delta[s]
       
-      delta[s]~dnorm(mu,tau.delta)
+      delta[s]~dnorm(mu,tau)
       alpha[s]~dnorm(0,0.0001)
       gamma[s]<-exp(delta[s])
       }
       ###Prior###
       beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])
       
-      sigma.delta~dunif(0,5)
-      tau.delta<-pow(sigma.delta,-2)
+      sigma~dunif(0,5)
+      tau<-pow(sigma,-2)
       mu~dt(0,0.5,v)
       v~dunif(0,8)
       rho<-exp(mu)
@@ -1220,7 +1652,8 @@ writeModel<-function(outcome,model,type,model.file,data){
   ## (iii) standard meta-analysis for continuous data
   
   sel.mod.ctns.std.ta.fix<-"
-  model{   \n## a. continuous fixed-effects meta-analysis with data available for two arms separately
+  ## a. continuous fixed-effects meta-analysis with data available for two arms separately
+  \n model{   
   for(s in 1:S) { 
   y0[s]~dnorm(alpha0[s],prec0[s])       
   y1[s]~dnorm(alpha1[s],prec1[s])       
@@ -1241,7 +1674,8 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.ctns.std.ta.ran<-"
-  model{  \n## b. continuous random-effects meta-analysis with data available for two arms separately
+  ## b. continuous random-effects meta-analysis with data available for two arms separately
+  \n model{  
   for(s in 1:S) { 
   y0[s]~dnorm(alpha0[s],prec0[s])       
   y1[s]~dnorm(alpha1[s],prec1[s])       
@@ -1251,12 +1685,12 @@ writeModel<-function(outcome,model,type,model.file,data){
   prec1[s]<-pow(se1[s],-2)
   
   alpha0[s]~dnorm(0,0.0001)
-  delta[s]~dnorm(mu,tau.delta)
+  delta[s]~dnorm(mu,tau)
   }
   
   ###prior###
   mu~dnorm(0,0.0001)
-  tau.delta<-pow(sigma,-2)
+  tau<-pow(sigma,-2)
   sigma~dunif(0,10)
   }"
   
@@ -1264,7 +1698,8 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.ctns.std.mv.fix<-"
-  model{  \n## c. continuous fixed-effects meta-analysis for studies reporting mean difference and pooled variance
+  ## c. continuous fixed-effects meta-analysis for studies reporting mean difference and pooled variance
+  \n model{  
   for(s in 1:S){
   y[s]~dnorm(mu,prec[s])
   
@@ -1279,15 +1714,16 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.ctns.std.mv.ran<-"
-  model{  \n## d. continuous random-effects meta-analysis for studies reporting mean difference and pooled variance
+  ## d. continuous random-effects meta-analysis for studies reporting mean difference and pooled variance
+  \n model{  
   for(s in 1:S){
   y[s]~dnorm(delta[s],prec[s])        
-  delta[s]~dnorm(mu,tau.delta) 
+  delta[s]~dnorm(mu,tau) 
   
   }
   ###prior###
   mu~dnorm(0,0.0001)
-  tau.delta<-pow(sigma,-2)
+  tau<-pow(sigma,-2)
   sigma~dunif(0,10)
   }" 
   
@@ -1300,7 +1736,8 @@ writeModel<-function(outcome,model,type,model.file,data){
   if(!is.null(data$J)) {
     sel.mod.ctns.reg.ta.fix<-if(data$J==1){ 
       "
-      model{ \n## a. continuous fix-effects meta-regression with data available for two arms separately
+      ## a. continuous fix-effects meta-regression with data available for two arms separately
+      \n model{ 
       for(s in 1:S) { 
       y0[s]~dnorm(alpha0[s],prec0[s])       
       y1[s]~dnorm(alpha1[s],prec1[s])       
@@ -1320,7 +1757,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       }"
     } else { 
       "
-      model{ \n## a. continuous fix-effects meta-regression with data available for two arms separately
+      ## a. continuous fix-effects meta-regression with data available for two arms separately
+      \n model{ 
       for(s in 1:S) { 
       y0[s]~dnorm(alpha0[s],prec0[s])       
       y1[s]~dnorm(alpha1[s],prec1[s])       
@@ -1345,7 +1783,8 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     sel.mod.ctns.reg.ta.ran<-if(data$J==1){
       "
-      model{ \n## b. continuous random-effects meta-regression with data available for two arms separately
+      ## b. continuous random-effects meta-regression with data available for two arms separately
+      \n model{ 
       for(s in 1:S) { 
       y0[s]~dnorm(alpha0[s],prec0[s])       
       y1[s]~dnorm(alpha1[s],prec1[s])       
@@ -1356,20 +1795,21 @@ writeModel<-function(outcome,model,type,model.file,data){
       
       alpha0[s]<-gamma0[s]+Z0[s,]%*%beta0
       gamma0[s]~dnorm(0,0.0001)
-      delta[s]~dnorm(mu,tau.delta)
+      delta[s]~dnorm(mu,tau)
       
       }
       
       ###prior###
       beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])     
       mu~dnorm(0,0.0001)
-      tau.delta<-pow(sigma,-2)
+      tau<-pow(sigma,-2)
       sigma~dunif(0,10)
       
       }" 
     } else {
       "
-      model{ \n## b. continuous random-effects meta-regression with data available for two arms separately
+      ## b. continuous random-effects meta-regression with data available for two arms separately
+      \n model{ 
       for(s in 1:S) { 
       y0[s]~dnorm(alpha0[s],prec0[s])       
       y1[s]~dnorm(alpha1[s],prec1[s])       
@@ -1380,14 +1820,14 @@ writeModel<-function(outcome,model,type,model.file,data){
       
       alpha0[s]<-gamma0[s]+Z0[s,]%*%beta0
       gamma0[s]~dnorm(0,0.0001)
-      delta[s]~dnorm(mu,tau.delta)
+      delta[s]~dnorm(mu,tau)
       
       }
       
       ###prior###
       beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])      
       mu~dnorm(0,0.0001)
-      tau.delta<-pow(sigma,-2)
+      tau<-pow(sigma,-2)
       sigma~dunif(0,10)
       
     }"   
@@ -1398,7 +1838,8 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     sel.mod.ctns.reg.mv.fix<-if(data$J==1){
       "
-      model{ \n## d. continuous fixed-effects meta-regression for studies reporting mean difference and pooled variance 
+      ## d. continuous fixed-effects meta-regression for studies reporting mean difference and pooled variance 
+      \n model{ 
       for(s in 1:S){
       y[s]~dnorm(delta[s],prec[s])        
       delta[s]<-alpha+Z0[s,]%*%beta0
@@ -1410,7 +1851,8 @@ writeModel<-function(outcome,model,type,model.file,data){
       }"
     } else {
       "
-      model{ \n## d. continuous fixed-effects meta-regression for studies reporting mean difference and pooled variance
+      ## d. continuous fixed-effects meta-regression for studies reporting mean difference and pooled variance
+      \n model{ 
       for(s in 1:S){ 
       y[s]~dnorm(delta[s],prec[s])        
       delta[s]<-alpha+Z0[s,]%*%beta0
@@ -1428,32 +1870,34 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     sel.mod.ctns.reg.mv.ran<-if(data$J==1){
       "
-      model{ \n## d. continuous random-effects meta-regression for studies reporting mean difference and pooled variance
+      ## d. continuous random-effects meta-regression for studies reporting mean difference and pooled variance
+      \n model{ 
       for(s in 1:S){
       y[s]~dnorm(delta[s],prec[s])        
       delta[s]<-alpha[s]+Z0[s,]%*%beta0
-      alpha[s]~dnorm(mu,tau.alpha)
+      alpha[s]~dnorm(mu,tau)
       
       }
       ###prior###
       beta0[1:J]~dnorm(m.beta0[],tau.beta0[,])       
       mu~dnorm(0,0.0001)
-      tau.alpha<-pow(sigma,-2)
+      tau<-pow(sigma,-2)
       sigma~dunif(0,10)
       }"
     } else {
       "
-      model{  \n## d. continuous random-effects meta-regression for studies reporting mean difference and pooled variance
+      ## d. continuous random-effects meta-regression for studies reporting mean difference and pooled variance
+      \n model{  
       for(s in 1:S){
       y[s]~dnorm(delta[s],prec[s])        
       delta[s]<-alpha[s]+Z0[s,]%*%beta0
-      alpha[s]~dnorm(mu,tau.alpha)
+      alpha[s]~dnorm(mu,tau)
       
       }
       ###prior###
       beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])       
       mu~dnorm(0,0.0001)
-      tau.alpha<-pow(sigma,-2)
+      tau<-pow(sigma,-2)
       sigma~dunif(0,10)
       
     }" 
@@ -1467,16 +1911,17 @@ writeModel<-function(outcome,model,type,model.file,data){
   ## (v) standard meta-analysis for count data
   
   sel.mod.count.std.fix<-"
-  model{ \n## a. count fixed-effects meta-analysis 
+  ## a. count fixed-effects meta-analysis
+  \n model{  
   for(s in 1:S){
   y0[s]~dpois(lambda0[s])
   y1[s]~dpois(lambda1[s])
   
-  log(lambda0[s])<-lograte0[s]+log(pt0[s])
-  log(lambda1[s])<-lograte1[s]+log(pt1[s])
+  log(lambda0[s])<-xi0[s]+log(p0[s])
+  log(lambda1[s])<-xi1[s]+log(p1[s])
   
-  lograte0[s]~dunif(-5,5)
-  lograte1[s]<-lograte0[s]+delta      ### delta is the log rate-ratio
+  xi0[s]~dunif(-5,5)
+  xi1[s]<-xi0[s]+delta      ### delta is the log rate-ratio
   
   }
   ### Prior ###
@@ -1489,22 +1934,23 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.count.std.unif.ran<-"
-  model{ \n## b. count random-effects meta-analysis with uniform prior
+  ## b. count random-effects meta-analysis with uniform prior
+  \n model{ 
   for(s in 1:S){
   y0[s]~dpois(lambda0[s])
   y1[s]~dpois(lambda1[s])
   
-  log(lambda0[s])<-lograte0[s]+log(pt0[s])
-  log(lambda1[s])<-lograte1[s]+log(pt1[s])
+  log(lambda0[s])<-xi0[s]+log(p0[s])
+  log(lambda1[s])<-xi1[s]+log(p1[s])
   
-  lograte0[s]~dunif(-5,5)
-  lograte1[s]<-lograte0[s]+delta[s]
-  delta[s]~dnorm(mu,tau.delta)
+  xi0[s]~dunif(-5,5)
+  xi1[s]<-xi0[s]+delta[s]
+  delta[s]~dnorm(mu,tau)
   gamma[s]<-exp(delta[s])
   }
   ### Prior ###
   mu~dnorm(0,0.0001)
-  tau.delta<-pow(sigma,-2)
+  tau<-pow(sigma,-2)
   sigma~dunif(0,10)
   IRR<-exp(mu)
   }"
@@ -1513,22 +1959,23 @@ writeModel<-function(outcome,model,type,model.file,data){
   
   
   sel.mod.count.std.hc.ran<-"
-  model{ \n## c. count random-effects meta-analysis with halfcauchy prior
+  ## c. count random-effects meta-analysis with halfcauchy prior  
+  \n model{ 
   for(s in 1:S){
   y0[s]~dpois(lambda0[s])
   y1[s]~dpois(lambda1[s])
   
-  log(lambda0[s])<-lograte0[s]+log(pt0[s])
-  log(lambda1[s])<-lograte1[s]+log(pt1[s])
+  log(lambda0[s])<-xi0[s]+log(p0[s])
+  log(lambda1[s])<-xi1[s]+log(p1[s])
   
-  lograte0[s]~dunif(-5,5)
-  lograte1[s]<-lograte0[s]+delta[s]
-  delta[s]~dnorm(mu,tau.delta)
+  xi0[s]~dunif(-5,5)
+  xi1[s]<-xi0[s]+delta[s]
+  delta[s]~dnorm(mu,tau)
   gamma[s]<-exp(delta[s])
   }
   ### Prior ###
   mu~dnorm(0,0.0001)
-  tau.delta<-pow(sigma,-2)
+  tau<-pow(sigma,-2)
   
   sigma<-abs(z.sigma)/pow(epsilon.sigma,0.5)
   z.sigma~dnorm(0,tau.z.sigma)
@@ -1550,17 +1997,18 @@ writeModel<-function(outcome,model,type,model.file,data){
   if(!is.null(data$J)) {
     sel.mod.count.reg.fix<-if(data$J==1){
       "
-      model{ \n## a. count fixed-effects meta-regression
+      ## a. count fixed-effects meta-regression
+      \n model{ 
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
       y1[s]~dpois(lambda1[s])
       
-      log(lambda0[s])<-lograte0[s]+log(pt0[s])
-      log(lambda1[s])<-lograte1[s]+log(pt1[s])
+      log(lambda0[s])<-xi0[s]+log(p0[s])
+      log(lambda1[s])<-xi1[s]+log(p1[s])
       
-      lograte0[s]<-logbrate[s]+Z0[s,]%*%beta0   
-      logbrate[s]~dunif(-5,5)
-      lograte1[s]<-lograte0[s]+delta
+      xi0[s]<-theta[s]+Z0[s,]%*%beta0   
+      theta[s]~dunif(-5,5)
+      xi1[s]<-xi0[s]+delta
       
       }
       ### Prior ###
@@ -1571,17 +2019,18 @@ writeModel<-function(outcome,model,type,model.file,data){
       }"
     } else {
       "
-      model{ \n## a. count fixed-effects meta-regression
+      ## a. count fixed-effects meta-regression
+      \n model{ 
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
       y1[s]~dpois(lambda1[s])
       
-      log(lambda0[s])<-lograte0[s]+log(pt0[s])
-      log(lambda1[s])<-lograte1[s]+log(pt1[s])
+      log(lambda0[s])<-xi0[s]+log(p0[s])
+      log(lambda1[s])<-xi1[s]+log(p1[s])
       
-      lograte0[s]<-logbrate[s]+Z0[s,]%*%beta0   
-      logbrate[s]~dunif(-5,5)
-      lograte1[s]<-lograte0[s]+delta
+      xi0[s]<-theta[s]+Z0[s,]%*%beta0   
+      theta[s]~dunif(-5,5)
+      xi1[s]<-xi0[s]+delta
       
       }
       ### Prior ###
@@ -1598,47 +2047,49 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     sel.mod.count.reg.unif.ran<-if(data$J==1){
       "
-      model{ \n## b. count random-effects meta-regression with uniform prior
+      ## b. count random-effects meta-regression with uniform prior
+      \n model{ 
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
       y1[s]~dpois(lambda1[s])
       
-      log(lambda0[s])<-lograte0[s]+log(pt0[s])
-      log(lambda1[s])<-lograte1[s]+log(pt1[s])
+      log(lambda0[s])<-xi0[s]+log(p0[s])
+      log(lambda1[s])<-xi1[s]+log(p1[s])
       
-      lograte0[s]<-logbrate[s]+Z0[s,]%*%beta0   
-      logbrate[s]~dunif(-5,5)
-      lograte1[s]<-lograte0[s]+delta[s]
-      delta[s]~dnorm(mu,tau.delta)
+      xi0[s]<-theta[s]+Z0[s,]%*%beta0   
+      theta[s]~dunif(-5,5)
+      xi1[s]<-xi0[s]+delta[s]
+      delta[s]~dnorm(mu,tau)
       gamma[s]<-exp(delta[s])
       }
       ### Prior ###
       beta0[1:J]~dnorm(m.beta0[],tau.beta0[,]) 
       mu~dnorm(0,0.0001)
-      tau.delta<-pow(sigma,-2)
+      tau<-pow(sigma,-2)
       sigma~dunif(0,10)
       IRR<-exp(mu)
       }"
     } else {
       "
-      model{ \n## b. count random-effects meta-regression with uniform prior
+      ## b. count random-effects meta-regression with uniform prior
+      \n model{ 
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
       y1[s]~dpois(lambda1[s])
       
-      log(lambda0[s])<-lograte0[s]+log(pt0[s])
-      log(lambda1[s])<-lograte1[s]+log(pt1[s])
+      log(lambda0[s])<-xi0[s]+log(p0[s])
+      log(lambda1[s])<-xi1[s]+log(p1[s])
       
-      lograte0[s]<-logbrate[s]+Z0[s,]%*%beta0   
-      logbrate[s]~dunif(-5,5)
-      lograte1[s]<-lograte0[s]+delta[s]
-      delta[s]~dnorm(mu,tau.delta)
+      xi0[s]<-theta[s]+Z0[s,]%*%beta0   
+      theta[s]~dunif(-5,5)
+      xi1[s]<-xi0[s]+delta[s]
+      delta[s]~dnorm(mu,tau)
       gamma[s]<-exp(delta[s])
       }
       ### Prior ###
       beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])
       mu~dnorm(0,0.0001)
-      tau.delta<-pow(sigma,-2)
+      tau<-pow(sigma,-2)
       sigma~dunif(0,10)
       IRR<-exp(mu)
     }" 
@@ -1649,24 +2100,25 @@ writeModel<-function(outcome,model,type,model.file,data){
     
     
     sel.mod.count.reg.hc.ran<-if(data$J==1){"
-      model{ \n## c. count random-effects meta-regression with halfcauchy prior
+      ## c. count random-effects meta-regression with halfcauchy prior
+      \n model{ 
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
       y1[s]~dpois(lambda1[s])
       
-      log(lambda0[s])<-lograte0[s]+log(pt0[s])
-      log(lambda1[s])<-lograte1[s]+log(pt1[s])
+      log(lambda0[s])<-xi0[s]+log(p0[s])
+      log(lambda1[s])<-xi1[s]+log(p1[s])
       
-      lograte0[s]<-logbrate[s]+Z0[s,]%*%beta0   
-      logbrate[s]~dunif(-5,5)
-      lograte1[s]<-lograte0[s]+delta[s]
-      delta[s]~dnorm(mu,tau.delta)
+      xi0[s]<-theta[s]+Z0[s,]%*%beta0   
+      theta[s]~dunif(-5,5)
+      xi1[s]<-xi0[s]+delta[s]
+      delta[s]~dnorm(mu,tau)
       gamma[s]<-exp(delta[s])                                                                                       
       }
       ### Prior ###
       beta0[1:J]~dnorm(m.beta0[],tau.beta0[,]) 
       mu~dnorm(0,0.0001)
-      tau.delta<-pow(sigma,-2)
+      tau<-pow(sigma,-2)
       
       sigma<-abs(z.sigma)/pow(epsilon.sigma,0.5)
       z.sigma~dnorm(0,tau.z.sigma)
@@ -1678,25 +2130,26 @@ writeModel<-function(outcome,model,type,model.file,data){
       }"
     } else {
       "
-      model{ \n## c. count random-effects meta-regression with halfcauchy prior
+      ## c. count random-effects meta-regression with halfcauchy prior
+      \n model{ 
       for(s in 1:S){
       y0[s]~dpois(lambda0[s])
       y1[s]~dpois(lambda1[s])
       
-      log(lambda0[s])<-lograte0[s]+log(pt0[s])
-      log(lambda1[s])<-lograte1[s]+log(pt1[s])
+      log(lambda0[s])<-xi0[s]+log(p0[s])
+      log(lambda1[s])<-xi1[s]+log(p1[s])
       
-      lograte0[s]<-logbrate[s]+Z0[s,]%*%beta0   
-      logbrate[s]~dunif(-5,5)
-      lograte1[s]<-lograte0[s]+delta[s]
-      delta[s]~dnorm(mu,tau.delta)
+      xi0[s]<-theta[s]+Z0[s,]%*%beta0   
+      theta[s]~dunif(-5,5)
+      xi1[s]<-xi0[s]+delta[s]
+      delta[s]~dnorm(mu,tau)
       gamma[s]<-exp(delta[s])
       }
       ### Prior ###
       
       beta0[1:J]~dmnorm(m.beta0[],tau.beta0[,])
       mu~dnorm(0,0.0001)
-      tau.delta<-pow(sigma,-2)
+      tau<-pow(sigma,-2)
       
       sigma<-abs(z.sigma)/pow(epsilon.sigma,0.5)
       z.sigma~dnorm(0,tau.z.sigma)

@@ -1,10 +1,10 @@
 \name{acf.plot}
 \alias{acf.plot}
 \title{
-Autocorrection function plot
+Autocorrelation function plot
 }
 \description{
-Function to create autocorrection function plot to assess convergence
+Function to create autocorrelation function plot to assess convergence
 }
 \usage{
 acf.plot(x,node,title="Autocorrelation function")
@@ -37,11 +37,11 @@ data.list <- list(y0=data$y0,y1=data$y1,n0=data$n0,n1=data$n1)
 ### generate output from bmeta 
 x <- bmeta(data=data.list,outcome="bin",model="std.dt",type="ran")
 
-### generate autocorrection function plot 
+### generate autocorrelation function plot 
 acf.plot(x,"alpha[1]")
 
-### generate autocorrection function plot and specify the title 
-acf.plot(x,"alpha[1]",title="Autocorrection plot")
+### generate autocorrelation function plot and specify the title 
+acf.plot(x,"alpha[1]",title="Autocorrelation plot")
 }
 \keyword{Autocorrelation}
 \keyword{MCMC}
